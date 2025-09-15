@@ -30,7 +30,7 @@ def get_embedding(image_path):
     return face.normed_embedding
 
 # ---------- LOAD QUERY IMAGE ----------
-query_image = "faces/foto.jpg"
+query_image = "faces/test.jpg"
 query_embedding = get_embedding(query_image)
 
 if query_embedding is None:
@@ -46,16 +46,16 @@ cur.execute("""
     SELECT name, image_path, embedding <-> %s::vector AS distance
     FROM people
     ORDER BY distance ASC
-    LIMIT 1;
+    LIMIT 10;
 """, (query_embedding_list,))
 
-result = cur.fetchone()
-if result:
-    name, path, distance = result
-    print(f"[RESULT] Closest match: {name} ({path}) with distance {distance:.4f}")
+results = cur.fetchall()
+if results:
+    print("[RESULT] Top 10 closest matches:")
+    for idx, (name, path, distance) in enumerate(results, start=1):
+        print(f"{idx}. {name} ({path}) → distance {distance:.4f}")
 else:
     print("[RESULT] No matches found.")
-
 # ---------- CLOSE DB ----------
 cur.close()
 conn.close()
