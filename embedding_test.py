@@ -43,7 +43,7 @@ query_embedding_list = query_embedding.tolist()
 # ---------- PGVector QUERY ----------
 # We use <-> operator for cosine distance (or euclidean if index is set differently)
 cur.execute("""
-    SELECT name, image_path, embedding <-> %s AS distance
+    SELECT name, image_path, embedding <-> %s::vector AS distance
     FROM people
     ORDER BY distance ASC
     LIMIT 1;
