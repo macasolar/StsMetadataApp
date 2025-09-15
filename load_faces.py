@@ -6,9 +6,9 @@ import insightface
 
 # ---------- DB CONFIG ----------
 DB_CONFIG = {
-    "dbname": "yourdbname",
-    "user": "youruser",
-    "password": "yourpassword",
+    "dbname": "faces",
+    "user": "face_app",
+    "password": "Sts2025$",
     "host": "localhost",
     "port": 5432
 }
@@ -23,18 +23,22 @@ conn = psycopg2.connect(**DB_CONFIG)
 cur = conn.cursor()
 
 # ---------- HELPER FUNCTION ----------
-def insert_employee(name, embedding):
-    embedding_list = embedding.tolist()
+def insert_person(name, image_path, embedding):
+    embedding_list = embedding.tolist()  # convert NumPy array to Python list
     cur.execute(
-        "INSERT INTO employees (name, embedding) VALUES (%s, %s) "
-        "ON CONFLICT (name) DO UPDATE SET embedding = EXCLUDED.embedding;",
-        (name, embedding_list)
+        """
+        INSERT INTO people (name, image_path, embedding)
+        VALUES (%s, %s, %s)
+        ON CONFLICT (name) DO UPDATE
+        SET image_path = EXCLUDED.image_path,
+            embedding  = EXCLUDED.embedding;
+        """,
+        (name, image_path, embedding_list)
     )
     conn.commit()
 
 # ---------- PROCESS FOLDER ----------
-folder = "employees"
-
+folder = "faces"
 for file in os.listdir(folder):
     if not (file.endswith(".jpg") or file.endswith(".png")):
         continue
@@ -54,9 +58,9 @@ for file in os.listdir(folder):
     embedding = face.normed_embedding  # 512-dim vector
 
     print(f"[INFO] Inserting {name} into DB")
-    insert_employee(name, np.array(embedding))
+    insert_person(name, path, np.array(embedding))
 
-print("[DONE] All employee embeddings inserted.")
+print("[DONE] All embeddings inserted.")
 
 # ---------- CLOSE DB ----------
 cur.close()
