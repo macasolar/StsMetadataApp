@@ -3,7 +3,7 @@ from datetime import datetime
 import pytz
 
 # The name of the file containing the JSON data
-FILE_NAME = "meta_output.txt"
+FILE_NAME = "../meta_output.txt"
 
 # The timezone for Panama
 panama_tz = pytz.timezone('America/Panama')

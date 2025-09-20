@@ -1,0 +1,2 @@
+mosquitto_sub -h localhost -t "metadata/cameraTest/cam1"
+mosquitto_sub -h localhost -t "metadata/cameraTest/cam2"
